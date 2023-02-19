@@ -1,0 +1,11 @@
+{
+  "tasks": {
+    "dev": "deno run --watch src/main.ts"
+  },
+  "imports": {
+    "cliffy/keypress": "https://deno.land/x/cliffy@v0.25.7/keypress/mod.ts",
+    "cliffy/table": "https://raw.githubusercontent.com/FukeKazki/deno-cliffy/main/table/mod.ts",
+    "hiragana-parser": "https://packages.obake.land/hiragana-parser/index.min.js",
+    "outdent": "https://deno.land/x/outdent@v0.8.0/mod.ts"
+  }
+}
