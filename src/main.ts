@@ -20,17 +20,38 @@ let keyCount = 0;
 let score = 0;
 let started = new Date();
 
-const displayLog = (first: string, second: string) => {
-  const removeline = ansi.cursorUp(1).eraseLine();
-  const spacer = "          ";
+const borderTop =
+  `=======================================================================================`;
+
+const displayLog = (first: string, second: string, hiragana: string) => {
   if (first && second) {
-    return console.log(removeline + spacer + success(first) + not(second));
+    // 更新
+    const removeline = ansi.cursorUp(2).eraseLine();
+    const spaceLength = Math.floor(
+      (borderTop.length - second.length - first.length) / 2,
+    );
+    const space = new Array(spaceLength).fill(" ").reduce((p, c) => p + c, "");
+    return console.log(
+      removeline + outdent`
+                       ${space}${success(first)}${not(second)}
+                       ${borderTop}
+                       `,
+    );
   }
   if (first) {
-    return console.log(removeline + spacer + success(first));
+    // 最後 いらない
   }
   if (second) {
-    return console.log(spacer + not(second));
+    // 最初
+    const spaceLength = Math.floor((borderTop.length - second.length) / 2);
+    const space = new Array(spaceLength).fill(" ").reduce((p, c) => p + c, "");
+    return console.log(outdent`
+                       ${borderTop}
+                       ${space}${success(hiragana)}
+                       ${space}${not(second)}
+                       ${borderTop}
+                       `);
+    // return console.log(spacer + not(second));
   }
 };
 
@@ -81,10 +102,7 @@ if (import.meta.main) {
   started = new Date();
   for (const row of ROW_PROBLEMS) {
     const parser = new HiraganaParser({ hiraganas: row });
-    const table = new Table([not(row)], [not(parser.notInputedRoma)]).indent(
-      10,
-    );
-    table.render();
+    displayLog(parser.inputedRoma, parser.notInputedRoma, row);
 
     for await (const event: KeyPressEvent of keypress()) {
       keyCount++;
@@ -93,7 +111,7 @@ if (import.meta.main) {
       if (success) {
         correctKeyCount++;
       }
-      displayLog(parser.inputedRoma, parser.notInputedRoma);
+      displayLog(parser.inputedRoma, parser.notInputedRoma, row);
       if (event.ctrlKey && event.key === "c") {
         console.log("exit");
         break;
